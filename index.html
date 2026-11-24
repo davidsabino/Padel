@@ -95,6 +95,7 @@ header.top::after { /* linha prateada */
   content: ""; position: absolute; left: 0; right: 0; bottom: 34px; height: 1px;
   background: linear-gradient(90deg, transparent, rgba(210, 220, 255, .45), transparent);
 }
+header.top .wrap { padding-bottom: 0; }
 .top-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; position: relative; z-index: 1; }
 .brand { display: flex; align-items: center; gap: 14px; min-width: 0; }
 .brand svg { flex: none; filter: drop-shadow(0 0 12px rgba(120, 180, 255, .45)); }
@@ -244,7 +245,8 @@ footer { margin-top: 26px; font-size: 11px; color: var(--text-3); text-align: ce
 [hidden] { display: none !important; }
 
 @media (max-width: 640px) {
-  header.top { padding-bottom: 64px; }
+  header.top { padding-bottom: 46px; }
+  header.top::after { display: none; }
   .top-row { flex-direction: column; align-items: flex-start; gap: 14px; }
   .brand svg { width: 48px; height: 48px; }
   .brand h1 .l1 { font-size: 20px; letter-spacing: .1em; }
