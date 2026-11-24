@@ -1,6 +1,6 @@
-# Padel
+# Champions League Aveirense de Padel
 
-Resultados de Padel: ranking Elo dos nossos jogos de duplas e cruzadinhos.
+Champions League Aveirense de Padel: ranking Elo dos nossos jogos de duplas e cruzadinhos.
 
 **Dashboard:** https://davidsabino.github.io/Padel/
 
