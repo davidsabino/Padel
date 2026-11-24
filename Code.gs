@@ -10,14 +10,22 @@
  *
  * Para acrescentar um jogador mais tarde: muda o nome em NOVO_JOGADOR
  * (lá em baixo) e executa a função "adicionarJogador".
+ *
+ * Para mudar o nome de um jogador: preenche NOME_ANTIGO e NOME_NOVO
+ * e executa a função "renomearJogador" (muda no formulário e nos jogos já registados).
  */
 
 var JOGADORES = [
-  'Maiquezitos', 'Ramalho', 'Pita', 'Chico', 'Fonseca', 'Brito',
+  'Mikezitos', 'Ramalho', 'Pita', 'Chico', 'Fonseca', 'Brito',
   'Sardo', 'Sabino', 'Bernardo Troia', 'Guilherme Silva', 'Marcelo Ramos'
 ];
 
 var NOVO_JOGADOR = 'Nome do novo jogador';
+
+// Para mudar o nome de um jogador: escreve aqui o nome antigo e o novo
+// e executa a função "renomearJogador".
+var NOME_ANTIGO = 'Maiquezitos';
+var NOME_NOVO = 'Mikezitos';
 
 function configurar() {
   var props = PropertiesService.getScriptProperties();
@@ -119,6 +127,37 @@ function adicionarJogador() {
     }
   });
   Logger.log(nome + ' adicionado ao formulário. Acrescenta-o também à lista JOGADORES da dashboard.');
+}
+
+function renomearJogador() {
+  var antigo = String(NOME_ANTIGO).trim(), novo = String(NOME_NOVO).trim();
+  if (!antigo || !novo || antigo === novo) {
+    Logger.log('Preenche NOME_ANTIGO e NOME_NOVO com nomes diferentes.');
+    return;
+  }
+  var props = PropertiesService.getScriptProperties();
+
+  // 1. Listas do formulário
+  var form = FormApp.openById(props.getProperty('FORM_ID'));
+  var listas = 0;
+  form.getItems(FormApp.ItemType.LIST).forEach(function (item) {
+    var l = item.asListItem();
+    var nomes = l.getChoices().map(function (c) { return c.getValue(); });
+    var i = nomes.indexOf(antigo);
+    if (i === -1) return;
+    if (nomes.indexOf(novo) === -1) nomes[i] = novo; else nomes.splice(i, 1);
+    nomes.sort(function (a, b) { return a.localeCompare(b, 'pt'); });
+    l.setChoiceValues(nomes);
+    listas++;
+  });
+
+  // 2. Jogos já registados na folha
+  var ss = SpreadsheetApp.openById(props.getProperty('SHEET_ID'));
+  var folha = folhaDoFormulario(ss) || ss.getSheets()[0];
+  var trocas = folha.createTextFinder(antigo).matchCase(true).matchEntireCell(true).replaceAllWith(novo);
+
+  Logger.log(antigo + ' passou a ' + novo + ': ' + listas + ' listas do formulário e ' + trocas + ' células na folha.');
+  Logger.log('Confirma que o nome novo também está na lista JOGADORES da dashboard.');
 }
 
 // Auxiliares
