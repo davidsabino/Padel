@@ -2,7 +2,7 @@
 
 Resultados de Padel: ranking Elo dos nossos jogos de duplas e cruzadinhos.
 
-**Dashboard:** https://davidsabino.github.io/padel/
+**Dashboard:** https://davidsabino.github.io/Padel/
 
 ## Como funciona
 
