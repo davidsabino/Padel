@@ -8,7 +8,10 @@
  *     (Na primeira vez a Google pede autorização: aceita com a tua conta.)
  *  4. Abre "Registo de execução": aparecem o link do formulário e o link de dados.
  *
- * Para acrescentar um jogador mais tarde: muda o nome em NOVO_JOGADOR
+ * Para acrescentar, tirar ou mudar jogadores: edita a lista JOGADORES e executa
+ * a função "atualizarJogadores" (põe o formulário igual à lista).
+ *
+ * Também podes acrescentar um só jogador: muda o nome em NOVO_JOGADOR
  * (lá em baixo) e executa a função "adicionarJogador".
  *
  * Para mudar o nome de um jogador: preenche NOME_ANTIGO e NOME_NOVO
@@ -17,7 +20,8 @@
 
 var JOGADORES = [
   'Mikezitos', 'Ramalho', 'Pita', 'Chico', 'Fonseca', 'Brito',
-  'Sardo', 'Sabino', 'Bernardo Troia', 'Guilherme Silva', 'Marcelo Ramos'
+  'Sardo', 'Sabino', 'Bernardo Troia', 'Guilherme Silva', 'Marcelo Ramos',
+  'Ventura'
 ];
 
 var NOVO_JOGADOR = 'Nome do novo jogador';
@@ -158,6 +162,32 @@ function renomearJogador() {
 
   Logger.log(antigo + ' passou a ' + novo + ': ' + listas + ' listas do formulário e ' + trocas + ' células na folha.');
   Logger.log('Confirma que o nome novo também está na lista JOGADORES da dashboard.');
+}
+
+/**
+ * Põe o formulário igual à lista JOGADORES (acrescenta os novos e tira os que já
+ * não estão na lista) e, se NOME_ANTIGO e NOME_NOVO estiverem preenchidos, troca
+ * também o nome nos jogos já registados. É a forma mais simples de manter tudo certo:
+ * edita a lista JOGADORES lá em cima e executa esta função.
+ */
+function atualizarJogadores() {
+  var props = PropertiesService.getScriptProperties();
+  var trocas = 0;
+  var antigo = String(NOME_ANTIGO).trim(), novo = String(NOME_NOVO).trim();
+  if (antigo && novo && antigo !== novo) {
+    var ss = SpreadsheetApp.openById(props.getProperty('SHEET_ID'));
+    var folha = folhaDoFormulario(ss) || ss.getSheets()[0];
+    trocas = folha.createTextFinder(antigo).matchCase(true).matchEntireCell(true).replaceAllWith(novo);
+  }
+  var nomes = JOGADORES.slice().sort(function (a, b) { return a.localeCompare(b, 'pt'); });
+  var form = FormApp.openById(props.getProperty('FORM_ID'));
+  var listas = 0;
+  form.getItems(FormApp.ItemType.LIST).forEach(function (item) {
+    item.asListItem().setChoiceValues(nomes);
+    listas++;
+  });
+  Logger.log('Formulário atualizado (' + listas + ' listas) com ' + nomes.length + ' jogadores: ' + nomes.join(', '));
+  if (trocas) Logger.log(antigo + ' passou a ' + novo + ' em ' + trocas + ' jogos já registados.');
 }
 
 // Auxiliares
